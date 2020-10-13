@@ -15,15 +15,17 @@ public class Asteroid : dangerousCollidable
 
     void Start()
     {
+
+
+        Debug.Log("test");
         screenBounds = camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
         rightBound = screenBounds.x + edgeBuffer;
         upperBound = screenBounds.y + edgeBuffer;
-        velocity = new Vector3(2, 3, 0);
     }
 
     void Update()
     {
-        //transform.Translate(velocity * Time.deltaTime);
+        transform.Translate(velocity * Time.deltaTime);
         if (!active)
         {
             CheckActive();
@@ -68,5 +70,10 @@ public class Asteroid : dangerousCollidable
     public override void Hit()
     {
         GameObject.Destroy(gameObject);
+    }
+
+    public void SetStart(Vector3 direction)
+    {
+        velocity = direction * (Random.value * 5f + 5f);
     }
 }
