@@ -12,6 +12,7 @@ public class Asteroid : dangerousCollidable
     private float upperBound;
     private bool active = false;
     private Vector3 velocity;
+    private bool locked = false;
 
     void Start()
     {
@@ -25,7 +26,8 @@ public class Asteroid : dangerousCollidable
 
     void Update()
     {
-        transform.Translate(velocity * Time.deltaTime);
+        Vector3 currentV = locked ? new Vector3(0, 0, 0) : velocity;
+        transform.Translate(currentV * Time.deltaTime);
         if (!active)
         {
             CheckActive();
@@ -75,5 +77,15 @@ public class Asteroid : dangerousCollidable
     public void SetStart(Vector3 direction)
     {
         velocity = direction * (Random.value * 5f + 5f);
+    }
+
+    public void Freeze() 
+    {
+        locked = true;
+    }
+
+    public void unFreeze()
+    {
+        locked = false;
     }
 }

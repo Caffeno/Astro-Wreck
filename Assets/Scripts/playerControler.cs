@@ -14,6 +14,9 @@ public class playerControler : MonoBehaviour
     [SerializeField] private LayerMask dangerousLayers;
     [SerializeField] private GameObject head;
     [SerializeField] private GameObject weakSpot;
+    [SerializeField] private GameObject rightLockScan;
+    [SerializeField] private GameObject leftLockScan;
+
 
     private Vector3 velocity;
     private Vector3 screenBounds;
@@ -21,7 +24,10 @@ public class playerControler : MonoBehaviour
     private float upperBound;
     private CapsuleCollider2D headCollider;
     private CapsuleCollider2D weakSpotCollider;
+    private EdgeCollider2D rightLockCollider;
+    private EdgeCollider2D leftLockCollider;
     private ContactFilter2D dangerousMask;
+    private bool locked;
 
 
     // Start is called before the first frame update
@@ -35,11 +41,20 @@ public class playerControler : MonoBehaviour
         upperBound = screenBounds.y + edgeBuffer;
         headCollider = head.GetComponent<CapsuleCollider2D>();
         weakSpotCollider = weakSpot.GetComponent<CapsuleCollider2D>();
+        rightLockCollider = rightLockScan.GetComponent<EdgeCollider2D>();
+        leftLockCollider = leftLockScan.GetComponent<EdgeCollider2D>();
+
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetAxisRaw("Horizontal") == 1)
+        {
+            attemptLock("Right");
+        }
+
+
         float yIn = Input.GetAxisRaw("Vertical");
         if (yIn > 0)
         {
@@ -49,11 +64,12 @@ public class playerControler : MonoBehaviour
         {
             velocity.y = Mathf.MoveTowards(velocity.y, 0, drag * Time.deltaTime);
         }
-        float xIn = Input.GetAxisRaw("Horizontal");
-        if (xIn != 0f)
-        {
-            transform.Rotate(new Vector3(0f, 0f, -xIn * Time.deltaTime * rotationSpeed));
-        }
+
+        //float xIn = Input.GetAxisRaw("Horizontal");
+        //if (xIn != 0f)
+        //{
+        //    transform.Rotate(new Vector3(0f, 0f, -xIn * Time.deltaTime * rotationSpeed));
+        //}
         transform.Translate(velocity * Time.deltaTime);
 
         ScreenWrap();
@@ -61,18 +77,27 @@ public class playerControler : MonoBehaviour
     }
 
 
+    private void attemptLock(string direction)
+    {
+        Collider2D[] test = { null };
+        Physics2D.OverlapCollider(rightLockCollider, dangerousMask, test);
+        foreach (Collider2D x in test)
+        {
+            if (x != null)
+            {
+                Debug.Log("Huzzah");
+            }
+
+        }
+    }
+
     private void HeadCollision()
     {
         Collider2D[] overLapping = {null, null, null, null, null};
         Physics2D.OverlapCollider(headCollider, dangerousMask, overLapping);
-        //overLapping = Physics2D.OverlapCapsuleAll(headCollider.transform.position, headCollider.size, headCollider.direction, 0f);
         foreach (Collider2D thing in overLapping)
         {
-            if (thing == headCollider || thing == weakSpotCollider)
-            {
-                continue;
-            }
-            else if (thing != null)
+            if (thing != null)
             {
                 dangerousCollidable x = thing.GetComponent<dangerousCollidable>();
                 x.Hit();
