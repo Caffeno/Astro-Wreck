@@ -27,7 +27,11 @@ public class playerControler : MonoBehaviour
     private EdgeCollider2D rightLockCollider;
     private EdgeCollider2D leftLockCollider;
     private ContactFilter2D dangerousMask;
-    private bool locked;
+    private bool lockedOn = false;
+    private float lockInput = 0;
+    private dangerousCollidable lockTarget = null;
+    private string lockDirection = null;
+    private float lockRealeased = 0f;
 
 
     // Start is called before the first frame update
@@ -49,11 +53,28 @@ public class playerControler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetAxisRaw("Horizontal") == 1)
+        lockInput = Input.GetAxisRaw("Horizontal");
+        lockDirection = null;
+        if (lockInput != 0) {lockDirection = lockInput == 1 ? "Right" : "Left";}
+
+        if (lockInput != 0 && !lockedOn && Time.realtimeSinceStartup - lockRealeased > 0.1f)
         {
-            attemptLock("Right");
+            attemptLock(lockDirection);
         }
 
+
+        if (lockInput != 0 && lockedOn)
+        {
+            Vector3 vectorToTarget = lockTarget.transform.position - transform.position;
+            Vector3 orientation = lockDirection == "Right" ? transform.right : - transform.right;
+            float angleOffset = Vector3.SignedAngle(orientation, vectorToTarget, Vector3.forward);
+            transform.Rotate(new Vector3(0f, 0f, Mathf.Sign(angleOffset) * Time.deltaTime * rotationSpeed));
+        }
+
+        if (lockInput == 0 && lockedOn && lockTarget != null)
+        {
+            UnLock();
+        }
 
         float yIn = Input.GetAxisRaw("Vertical");
         if (yIn > 0)
@@ -65,29 +86,33 @@ public class playerControler : MonoBehaviour
             velocity.y = Mathf.MoveTowards(velocity.y, 0, drag * Time.deltaTime);
         }
 
-        //float xIn = Input.GetAxisRaw("Horizontal");
-        //if (xIn != 0f)
-        //{
-        //    transform.Rotate(new Vector3(0f, 0f, -xIn * Time.deltaTime * rotationSpeed));
-        //}
         transform.Translate(velocity * Time.deltaTime);
 
-        ScreenWrap();
         HeadCollision();
+        ScreenWrap();
     }
-
 
     private void attemptLock(string direction)
     {
-        Collider2D[] test = { null };
-        Physics2D.OverlapCollider(rightLockCollider, dangerousMask, test);
-        foreach (Collider2D x in test)
+        //TODO: Find nearest Objectin area
+        Collider2D[] lockTargetColliders = { null, null, null };
+        EdgeCollider2D colliderLockDirection = direction == "Right" ? rightLockCollider : leftLockCollider;
+        Physics2D.OverlapCollider(colliderLockDirection, dangerousMask, lockTargetColliders);
+        foreach (Collider2D collider in lockTargetColliders)
         {
-            if (x != null)
+            if (collider != null)
             {
                 Debug.Log("Huzzah");
+                dangerousCollidable target = collider.GetComponent<dangerousCollidable>();
+                if (target != null) 
+                {
+                    Debug.Log("Target Found");
+                    lockedOn = true;
+                    target.Freeze();
+                    lockTarget = target;
+                    return;
+                }
             }
-
         }
     }
 
@@ -95,12 +120,13 @@ public class playerControler : MonoBehaviour
     {
         Collider2D[] overLapping = {null, null, null, null, null};
         Physics2D.OverlapCollider(headCollider, dangerousMask, overLapping);
-        foreach (Collider2D thing in overLapping)
+        foreach (Collider2D obsticle in overLapping)
         {
-            if (thing != null)
+            if (obsticle != null)
             {
-                dangerousCollidable x = thing.GetComponent<dangerousCollidable>();
-                x.Hit();
+                dangerousCollidable crashedObject = obsticle.GetComponent<dangerousCollidable>();
+                if (crashedObject == lockTarget) { UnLock(); }
+                crashedObject.Hit();
             }
         }
     }
@@ -122,7 +148,19 @@ public class playerControler : MonoBehaviour
         }
         if (changed)
         {
+            Debug.Log("Hello World");
+
             transform.position = new Vector3(clampedx, clampedy, 0);
+            if (lockedOn) { UnLock(); }
         }
+
+    }
+
+    private void UnLock()
+    {
+        lockedOn = false;
+        lockTarget.UnFreeze();
+        lockTarget = null;
+        lockRealeased = Time.realtimeSinceStartup;
     }
 }

@@ -16,9 +16,6 @@ public class Asteroid : dangerousCollidable
 
     void Start()
     {
-
-
-        Debug.Log("test");
         screenBounds = camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
         rightBound = screenBounds.x + edgeBuffer;
         upperBound = screenBounds.y + edgeBuffer;
@@ -26,8 +23,11 @@ public class Asteroid : dangerousCollidable
 
     void Update()
     {
-        Vector3 currentV = locked ? new Vector3(0, 0, 0) : velocity;
-        transform.Translate(currentV * Time.deltaTime);
+        if (!locked)
+        {
+            transform.Translate(velocity * Time.deltaTime);
+        }
+
         if (!active)
         {
             CheckActive();
@@ -39,6 +39,13 @@ public class Asteroid : dangerousCollidable
         }
     }
 
+    private void oobCheck()
+    {
+        if (Mathf.Abs(transform.position.x) > 100 || Mathf.Abs(transform.position.y) > 100)
+        {
+            GameObject.Destroy(gameObject);
+        }
+    }
     private void ScreenWrap()
     {
         float clampedx = Mathf.Clamp(transform.position.x, -rightBound, rightBound);
@@ -79,12 +86,12 @@ public class Asteroid : dangerousCollidable
         velocity = direction * (Random.value * 5f + 5f);
     }
 
-    public void Freeze() 
+    public override void Freeze() 
     {
         locked = true;
     }
 
-    public void unFreeze()
+    public override void UnFreeze()
     {
         locked = false;
     }
