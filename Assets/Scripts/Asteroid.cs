@@ -6,16 +6,21 @@ public class Asteroid : dangerousCollidable
 {
     [SerializeField] private Camera camera;
     [SerializeField] private float edgeBuffer = 0.4f;
+    [SerializeField] private float mass = 100;
+
 
     private Vector3 screenBounds;
     private float rightBound;
     private float upperBound;
-    private bool active = false;
-    private Vector3 velocity;
+    [SerializeField] private bool active = false;
+    private Vector3 velocity = new Vector3(0, 0, 0);
     private bool locked = false;
+    private Behaviour halo;
 
     void Start()
     {
+        halo = (Behaviour)GetComponent("Halo");
+
         screenBounds = camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
         rightBound = screenBounds.x + edgeBuffer;
         upperBound = screenBounds.y + edgeBuffer;
@@ -25,7 +30,8 @@ public class Asteroid : dangerousCollidable
     {
         if (!locked)
         {
-            transform.Translate(velocity * Time.deltaTime);
+            Move();
+
         }
 
         if (!active)
@@ -33,10 +39,7 @@ public class Asteroid : dangerousCollidable
             CheckActive();
         }
 
-        if (active)
-        {
-            ScreenWrap();
-        }
+        oobCheck();
     }
 
     private void oobCheck()
@@ -46,8 +49,9 @@ public class Asteroid : dangerousCollidable
             GameObject.Destroy(gameObject);
         }
     }
-    private void ScreenWrap()
+    private bool ScreenWrap()
     {
+
         float clampedx = Mathf.Clamp(transform.position.x, -rightBound, rightBound);
         float clampedy = Mathf.Clamp(transform.position.y, -upperBound, upperBound);
         bool changed = false;
@@ -65,6 +69,7 @@ public class Asteroid : dangerousCollidable
         {
             transform.position = new Vector3(clampedx, clampedy, 0);
         }
+        return changed;
     }
 
     private void CheckActive()
@@ -89,10 +94,35 @@ public class Asteroid : dangerousCollidable
     public override void Freeze() 
     {
         locked = true;
+        halo.enabled = true;
     }
 
     public override void UnFreeze()
     {
         locked = false;
+        halo.enabled = false;
+    }
+
+    public override bool ForceUpdate(Vector3 force)
+    {
+        transform.position += force / (mass * 2);
+        velocity += force / (Time.deltaTime * mass);
+
+        return ScreenWrap();
+    }
+
+    public override bool Move()
+    {
+        transform.position += velocity * Time.deltaTime;
+        if (active)
+        {
+            return ScreenWrap();
+        }
+        return false;
+    }
+
+    public override float GetMass()
+    {
+        return mass;
     }
 }

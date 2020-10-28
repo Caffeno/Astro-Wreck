@@ -1,15 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Schema;
+using UnityEditorInternal;
 using UnityEngine;
 
 public class playerControler : MonoBehaviour
 {
     [SerializeField] private float topSpeed = 10f;
-    [SerializeField] private float acceleration = 70f;
+    [SerializeField] private float thrustForce = 70f;
     [SerializeField] private float drag = 10f;
     [SerializeField] private float rotationSpeed = 10f;
     [SerializeField] private float edgeBuffer = 0.2f;
+    [SerializeField] private float mass;
+
     [SerializeField] private Camera camera;
     [SerializeField] private LayerMask dangerousLayers;
     [SerializeField] private GameObject head;
@@ -32,6 +36,13 @@ public class playerControler : MonoBehaviour
     private dangerousCollidable lockTarget = null;
     private string lockDirection = null;
     private float lockRealeased = 0f;
+    private float timeSincePrint;
+    private float targetRotation;
+    private float currentRotation;
+    private float newEulerAngle;
+    private float maxLength = 0;
+    private Vector3 zeroV = new Vector3(0, 0, 0);
+    private bool angleLocked = false;
 
 
     // Start is called before the first frame update
@@ -53,43 +64,137 @@ public class playerControler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        float yIn = Input.GetAxisRaw("Vertical");
+        if (yIn != 0)
+        {
+            velocity += transform.up * thrustForce * Time.deltaTime * yIn / mass;
+        }
+
+        velocity = Vector3.MoveTowards(velocity, zeroV, 0.25f * (velocity.magnitude) * Time.deltaTime);
+        transform.position += velocity * Time.deltaTime;
+
+        HandleLock();
+
+        HeadCollision();
+
+        ScreenWrap();
+    }
+
+    private void HandleLock()
+    {
         lockInput = Input.GetAxisRaw("Horizontal");
         lockDirection = null;
-        if (lockInput != 0) {lockDirection = lockInput == 1 ? "Right" : "Left";}
+        if (lockInput != 0) { lockDirection = lockInput == 1 ? "Right" : "Left"; }
 
         if (lockInput != 0 && !lockedOn && Time.realtimeSinceStartup - lockRealeased > 0.1f)
         {
             attemptLock(lockDirection);
         }
 
-
         if (lockInput != 0 && lockedOn)
         {
-            Vector3 vectorToTarget = lockTarget.transform.position - transform.position;
-            Vector3 orientation = lockDirection == "Right" ? transform.right : - transform.right;
-            float angleOffset = Vector3.SignedAngle(orientation, vectorToTarget, Vector3.forward);
-            transform.Rotate(new Vector3(0f, 0f, Mathf.Sign(angleOffset) * Time.deltaTime * rotationSpeed));
+
+            bool checkTeather = lockTarget.Move();
+            if (checkTeather)
+            {
+                UnLock();
+                return;
+            }
+            float seperation = Vector3.Distance(transform.position, lockTarget.transform.position);
+            Vector3 vectorToTarget = (lockTarget.transform.position - transform.position).normalized;
+
+            if (seperation > maxLength)
+            {
+                Debug.Log(seperation);
+                Debug.Log(Mathf.Sqrt(Mathf.Pow(transform.position.x - lockTarget.transform.position.x, 2) + Mathf.Pow(transform.position.y - lockTarget.transform.position.y, 2)));
+
+                float targetMass = lockTarget.GetMass();
+                float totalForce = (2 * mass * targetMass * (seperation - maxLength) / (mass + targetMass));
+                totalForce = totalForce > 1 ? 1 : totalForce;
+                transform.position += vectorToTarget * totalForce / (2 * mass);
+                velocity += vectorToTarget * totalForce / (Time.deltaTime * mass);
+                lockTarget.ForceUpdate(-vectorToTarget * totalForce);
+                seperation = Vector3.Distance(transform.position, lockTarget.transform.position);
+                Debug.Log(totalForce);
+                if (seperation > maxLength)
+                {
+                    maxLength = seperation;
+                }
+                HandleRotation(lockDirection);
+
+            }
+            else
+            {
+                maxLength = seperation;
+            }
+
         }
 
         if (lockInput == 0 && lockedOn && lockTarget != null)
         {
             UnLock();
         }
+    }
 
-        float yIn = Input.GetAxisRaw("Vertical");
-        if (yIn > 0)
-        {
-            velocity.y = Mathf.MoveTowards(velocity.y, topSpeed, acceleration * Time.deltaTime);
+    private void HandleRotation(string lockSide)
+    {
+        float targetVx;
+        float targetVy;
+        Vector3 vectorToTarget = (lockTarget.transform.position - transform.position);
+        if (lockSide == "Right") 
+        { 
+            targetVx = -vectorToTarget.y;
+            targetVy = vectorToTarget.x;
         }
         else
         {
-            velocity.y = Mathf.MoveTowards(velocity.y, 0, drag * Time.deltaTime);
+            targetVx = vectorToTarget.y;
+            targetVy = -vectorToTarget.x;
         }
+        {
 
-        transform.Translate(velocity * Time.deltaTime);
+        }
+        if (targetVy == 0)
+        {
+            if (targetVx != 0)
+            {
+                targetRotation = targetVx > 0f ? 270f : 90f;
+            }
+        }
+        else
+        {
+            targetRotation = Mathf.Atan(targetVx / targetVy) * 180 / (Mathf.PI);
+            if (targetVy > 0)
+            {
+                targetRotation *= -1;
+            }
+            else
+            {
+                targetRotation = targetVx > 0 ? -90 - (targetRotation + 90) : 180 - (targetRotation);
+            }
+        }
+        if (!angleLocked)
+        {
+            currentRotation = transform.eulerAngles.z;
+            if (Mathf.Abs(targetRotation - currentRotation) > 180)
+            {
+                currentRotation -= 360;
+            }
+            //Debug.Log("target current");
+            //Debug.Log(targetRotation);
 
-        HeadCollision();
-        ScreenWrap();
+            //Debug.Log(currentRotation);
+            newEulerAngle = Mathf.MoveTowardsAngle(currentRotation, targetRotation, rotationSpeed * Time.deltaTime * lockTarget.GetMass() / mass);
+            transform.eulerAngles = new Vector3(0, 0, newEulerAngle);
+            if (newEulerAngle == targetRotation && lockTarget.GetMass() >= mass)
+            {
+                angleLocked = true;
+            }
+        }
+        else
+        {
+            transform.eulerAngles = new Vector3(0, 0, targetRotation);
+        }
     }
 
     private void attemptLock(string direction)
@@ -102,14 +207,13 @@ public class playerControler : MonoBehaviour
         {
             if (collider != null)
             {
-                Debug.Log("Huzzah");
                 dangerousCollidable target = collider.GetComponent<dangerousCollidable>();
                 if (target != null) 
                 {
-                    Debug.Log("Target Found");
                     lockedOn = true;
                     target.Freeze();
                     lockTarget = target;
+                    maxLength = Vector3.Distance(transform.position, target.transform.position);
                     return;
                 }
             }
@@ -148,12 +252,9 @@ public class playerControler : MonoBehaviour
         }
         if (changed)
         {
-            Debug.Log("Hello World");
-
             transform.position = new Vector3(clampedx, clampedy, 0);
             if (lockedOn) { UnLock(); }
         }
-
     }
 
     private void UnLock()
@@ -162,5 +263,6 @@ public class playerControler : MonoBehaviour
         lockTarget.UnFreeze();
         lockTarget = null;
         lockRealeased = Time.realtimeSinceStartup;
+        angleLocked = false;
     }
 }

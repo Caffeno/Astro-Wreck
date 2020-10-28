@@ -56,7 +56,6 @@ public class directorController : MonoBehaviour
     private Vector3 GetSpawn()
     {
         float xStart = (Random.value * 2f * rightBound) - (rightBound);
-        Debug.Log(xStart);
         float yStart = (Random.value * 2f * upperBound) - (upperBound);
         if (xStart < rightBound - 5f && xStart > 5f - rightBound &&
             yStart < upperBound - 5f && yStart > 5f - upperBound)
