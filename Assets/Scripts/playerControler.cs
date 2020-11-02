@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Schema;
@@ -7,19 +8,46 @@ using UnityEngine;
 
 public class playerControler : MonoBehaviour
 {
-    [SerializeField] private float topSpeed = 10f;
-    [SerializeField] private float thrustForce = 70f;
-    [SerializeField] private float drag = 10f;
-    [SerializeField] private float rotationSpeed = 10f;
-    [SerializeField] private float edgeBuffer = 0.2f;
-    [SerializeField] private float mass;
+    [Serializable]
+    private struct PlayerStatFields
+    {
+        public float topSpeed;
+        public float thrustForce;
+        public float drag;
+        public float rotationSpeed;
+        public float mass;
+        public float teatherRadius;
+        public float teatherRange;
+    }
+    [SerializeField] private PlayerStatFields playerStats;
 
-    [SerializeField] private Camera camera;
-    [SerializeField] private LayerMask dangerousLayers;
-    [SerializeField] private GameObject head;
-    [SerializeField] private GameObject weakSpot;
-    [SerializeField] private GameObject rightLockScan;
-    [SerializeField] private GameObject leftLockScan;
+    [Serializable] private struct ShipPartFields
+    {
+        public GameObject head;
+        public GameObject weakSpot;
+    }
+    [SerializeField] private ShipPartFields shipParts;
+
+    [Serializable] private struct WorldMaskFields
+    {
+        public LayerMask dangerousLayers;
+        public LayerMask grappleTargets;
+    }
+    [SerializeField] private WorldMaskFields worldMasks;
+
+    [SerializeField] private Animator animator;
+
+
+
+    //To be Replaced
+    public Camera camera;
+    public float edgeBuffer = 0.2f;
+    public GameObject rightLockScan;
+    public GameObject leftLockScan;
+
+
+
+
 
 
     private Vector3 velocity;
@@ -49,13 +77,13 @@ public class playerControler : MonoBehaviour
     void Start()
     {
         dangerousMask.useTriggers = false;
-        dangerousMask.SetLayerMask(dangerousLayers);
+        dangerousMask.SetLayerMask(worldMasks.dangerousLayers);
         dangerousMask.useLayerMask = true;
         screenBounds = camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
         rightBound = screenBounds.x + edgeBuffer;
         upperBound = screenBounds.y + edgeBuffer;
-        headCollider = head.GetComponent<CapsuleCollider2D>();
-        weakSpotCollider = weakSpot.GetComponent<CapsuleCollider2D>();
+        headCollider = shipParts.head.GetComponent<CapsuleCollider2D>();
+        weakSpotCollider = shipParts.weakSpot.GetComponent<CapsuleCollider2D>();
         rightLockCollider = rightLockScan.GetComponent<EdgeCollider2D>();
         leftLockCollider = leftLockScan.GetComponent<EdgeCollider2D>();
 
@@ -67,7 +95,7 @@ public class playerControler : MonoBehaviour
         float yIn = Input.GetAxisRaw("Vertical");
         if (yIn != 0)
         {
-            velocity += transform.up * thrustForce * Time.deltaTime * yIn / mass;
+            velocity += transform.up * playerStats.thrustForce * Time.deltaTime * yIn / playerStats.mass;
         }
 
         velocity = Vector3.MoveTowards(velocity, zeroV, 0.25f * (velocity.magnitude) * Time.deltaTime);
@@ -84,7 +112,13 @@ public class playerControler : MonoBehaviour
     {
         lockInput = Input.GetAxisRaw("Horizontal");
         lockDirection = null;
-        if (lockInput != 0) { lockDirection = lockInput == 1 ? "Right" : "Left"; }
+        animator.SetBool("turning_left", false);
+        animator.SetBool("turning_right", false);
+        if (lockInput != 0) 
+        { 
+            lockDirection = lockInput == 1 ? "Right" : "Left";
+        
+        }
 
         if (lockInput != 0 && !lockedOn && Time.realtimeSinceStartup - lockRealeased > 0.1f)
         {
@@ -93,6 +127,7 @@ public class playerControler : MonoBehaviour
 
         if (lockInput != 0 && lockedOn)
         {
+            animator.SetBool(lockInput == 1 ? "turning_right" : "turning_left", true);
 
             bool checkTeather = lockTarget.Move();
             if (checkTeather)
@@ -109,10 +144,10 @@ public class playerControler : MonoBehaviour
                 Debug.Log(Mathf.Sqrt(Mathf.Pow(transform.position.x - lockTarget.transform.position.x, 2) + Mathf.Pow(transform.position.y - lockTarget.transform.position.y, 2)));
 
                 float targetMass = lockTarget.GetMass();
-                float totalForce = (2 * mass * targetMass * (seperation - maxLength) / (mass + targetMass));
+                float totalForce = (2 * playerStats.mass * targetMass * (seperation - maxLength) / (playerStats.mass + targetMass));
                 totalForce = totalForce > 1 ? 1 : totalForce;
-                transform.position += vectorToTarget * totalForce / (2 * mass);
-                velocity += vectorToTarget * totalForce / (Time.deltaTime * mass);
+                transform.position += vectorToTarget * totalForce / (2 * playerStats.mass);
+                velocity += vectorToTarget * totalForce / (Time.deltaTime * playerStats.mass);
                 lockTarget.ForceUpdate(-vectorToTarget * totalForce);
                 seperation = Vector3.Distance(transform.position, lockTarget.transform.position);
                 Debug.Log(totalForce);
@@ -184,9 +219,9 @@ public class playerControler : MonoBehaviour
             //Debug.Log(targetRotation);
 
             //Debug.Log(currentRotation);
-            newEulerAngle = Mathf.MoveTowardsAngle(currentRotation, targetRotation, rotationSpeed * Time.deltaTime * lockTarget.GetMass() / mass);
+            newEulerAngle = Mathf.MoveTowardsAngle(currentRotation, targetRotation,  velocity.magnitude * playerStats.rotationSpeed * Time.deltaTime * lockTarget.GetMass() / playerStats.mass);
             transform.eulerAngles = new Vector3(0, 0, newEulerAngle);
-            if (newEulerAngle == targetRotation && lockTarget.GetMass() >= mass)
+            if (newEulerAngle == targetRotation && lockTarget.GetMass() >= playerStats.mass)
             {
                 angleLocked = true;
             }
@@ -264,5 +299,16 @@ public class playerControler : MonoBehaviour
         lockTarget = null;
         lockRealeased = Time.realtimeSinceStartup;
         angleLocked = false;
+
+    }
+
+    public Vector3 GetVelocity()
+    {
+        return velocity;
+    }
+
+    public float GetTopSpeed()
+    {
+        return playerStats.topSpeed;
     }
 }
