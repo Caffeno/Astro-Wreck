@@ -105,7 +105,7 @@ public class playerControler : MonoBehaviour
 
         HeadCollision();
 
-        ScreenWrap();
+        //ScreenWrap();
     }
 
     private void HandleLock()
@@ -310,5 +310,10 @@ public class playerControler : MonoBehaviour
     public float GetTopSpeed()
     {
         return playerStats.topSpeed;
+    }
+
+    public Vector3 GetPlayerVelocity()
+    {
+        return velocity;
     }
 }
