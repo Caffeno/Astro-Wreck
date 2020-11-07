@@ -1,5 +1,17 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!122 &7005027880497964522
+Halo:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7907323563600011059}
+  m_Enabled: 0
+  m_Color:
+    serializedVersion: 2
+    rgba: 4286611584
+  m_Size: 1.2
 --- !u!1001 &6893042692443472794
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -114,3 +126,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 66e4bdc45f63e4b3f967236de08bc3f1, type: 3}
+--- !u!1 &7907323563600011059 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3608919509131746473, guid: 66e4bdc45f63e4b3f967236de08bc3f1,
+    type: 3}
+  m_PrefabInstance: {fileID: 6893042692443472794}
+  m_PrefabAsset: {fileID: 0}

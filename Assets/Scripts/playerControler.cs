@@ -54,7 +54,7 @@ public class playerControler : MonoBehaviour
     private Vector3 screenBounds;
     private float rightBound;
     private float upperBound;
-    private CapsuleCollider2D headCollider;
+    private EdgeCollider2D headCollider;
     private CapsuleCollider2D weakSpotCollider;
     private EdgeCollider2D rightLockCollider;
     private EdgeCollider2D leftLockCollider;
@@ -82,7 +82,7 @@ public class playerControler : MonoBehaviour
         screenBounds = camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
         rightBound = screenBounds.x + edgeBuffer;
         upperBound = screenBounds.y + edgeBuffer;
-        headCollider = shipParts.head.GetComponent<CapsuleCollider2D>();
+        headCollider = shipParts.head.GetComponent<EdgeCollider2D>();
         weakSpotCollider = shipParts.weakSpot.GetComponent<CapsuleCollider2D>();
         rightLockCollider = rightLockScan.GetComponent<EdgeCollider2D>();
         leftLockCollider = leftLockScan.GetComponent<EdgeCollider2D>();
@@ -140,8 +140,8 @@ public class playerControler : MonoBehaviour
 
             if (seperation > maxLength)
             {
-                Debug.Log(seperation);
-                Debug.Log(Mathf.Sqrt(Mathf.Pow(transform.position.x - lockTarget.transform.position.x, 2) + Mathf.Pow(transform.position.y - lockTarget.transform.position.y, 2)));
+                //Debug.Log(seperation);
+                //Debug.Log(Mathf.Sqrt(Mathf.Pow(transform.position.x - lockTarget.transform.position.x, 2) + Mathf.Pow(transform.position.y - lockTarget.transform.position.y, 2)));
 
                 float targetMass = lockTarget.GetMass();
                 float totalForce = (2 * playerStats.mass * targetMass * (seperation - maxLength) / (playerStats.mass + targetMass));
@@ -150,7 +150,7 @@ public class playerControler : MonoBehaviour
                 velocity += vectorToTarget * totalForce / (Time.deltaTime * playerStats.mass);
                 lockTarget.ForceUpdate(-vectorToTarget * totalForce);
                 seperation = Vector3.Distance(transform.position, lockTarget.transform.position);
-                Debug.Log(totalForce);
+                //Debug.Log(totalForce);
                 if (seperation > maxLength)
                 {
                     maxLength = seperation;
@@ -215,10 +215,10 @@ public class playerControler : MonoBehaviour
             {
                 currentRotation -= 360;
             }
-            //Debug.Log("target current");
-            //Debug.Log(targetRotation);
+            ////Debug.Log("target current");
+            ////Debug.Log(targetRotation);
 
-            //Debug.Log(currentRotation);
+            ////Debug.Log(currentRotation);
             newEulerAngle = Mathf.MoveTowardsAngle(currentRotation, targetRotation,  velocity.magnitude * playerStats.rotationSpeed * Time.deltaTime * lockTarget.GetMass() / playerStats.mass);
             transform.eulerAngles = new Vector3(0, 0, newEulerAngle);
             if (newEulerAngle == targetRotation && lockTarget.GetMass() >= playerStats.mass)
@@ -248,6 +248,7 @@ public class playerControler : MonoBehaviour
                     lockedOn = true;
                     target.Freeze();
                     lockTarget = target;
+                    Debug.Log(target);
                     maxLength = Vector3.Distance(transform.position, target.transform.position);
                     return;
                 }

@@ -92,6 +92,7 @@ GameObject:
   - component: {fileID: 3608919509131746516}
   - component: {fileID: 3608919509131746519}
   - component: {fileID: 3608919509131746518}
+  - component: {fileID: 2280491197283649271}
   m_Layer: 9
   m_Name: Small Asteroid
   m_TagString: Untagged
@@ -148,3 +149,16 @@ MonoBehaviour:
   active: 0
   edgeBuffer: 0.4
   mass: 50
+  DestroyEvent: event:/Asteroid Hit
+--- !u!122 &2280491197283649271
+Halo:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3608919509131746473}
+  m_Enabled: 0
+  m_Color:
+    serializedVersion: 2
+    rgba: 4286611584
+  m_Size: 0.2

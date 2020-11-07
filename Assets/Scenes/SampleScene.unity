@@ -182,7 +182,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 405250563}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 9.32, y: -0.24, z: -10}
+  m_LocalPosition: {x: 9.31, y: -1.15, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 714356782}
@@ -318,7 +318,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 9.32, y: -0.24, z: -10}
+  m_LocalPosition: {x: 9.31, y: -1.15, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -556,7 +556,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 954473567}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.13, y: -0.78, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 637267980}
@@ -576,8 +576,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.05}
-  m_Size: {x: 0.5, y: 0.33}
+  m_Offset: {x: 0.15307082, y: 0.14740685}
+  m_Size: {x: 2.5038595, y: 1.2236263}
   m_Direction: 1
 --- !u!1 &1268510123
 GameObject:
@@ -591,7 +591,6 @@ GameObject:
   - component: {fileID: 1268510125}
   - component: {fileID: 1268510127}
   - component: {fileID: 1268510126}
-  - component: {fileID: 1268510128}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -607,7 +606,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1268510123}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 9.32, y: -0.24, z: 0}
+  m_LocalPosition: {x: 9.31, y: -1.15, z: 0}
   m_LocalScale: {x: 0.3, y: 0.3, z: 1}
   m_Children:
   - {fileID: 954473568}
@@ -691,7 +690,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: d9cf0c1b7c795e340b8e2ef1675d8bca, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -699,7 +698,7 @@ SpriteRenderer:
   m_Size: {x: 5, y: 5}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!95 &1268510127
@@ -721,29 +720,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &1268510128
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1268510123}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CollisionTag: 
-  Event: event:/New Event
-  PlayEvent: 0
-  StopEvent: 0
-  AllowFadeout: 1
-  TriggerOnce: 0
-  Preload: 0
-  Params: []
-  OverrideAttenuation: 0
-  OverrideMinDistance: 1
-  OverrideMaxDistance: 20
 --- !u!1 &1544959424
 GameObject:
   m_ObjectHideFlags: 0
@@ -857,8 +833,8 @@ Transform:
   m_Father: {fileID: 1268510124}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &1583272492
-CapsuleCollider2D:
+--- !u!68 &1583272492
+EdgeCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -868,11 +844,27 @@ CapsuleCollider2D:
   m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_UsedByEffector: 0
+  m_UsedByEffector: 1
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.2}
-  m_Size: {x: 0.7, y: 0.5}
-  m_Direction: 1
+  m_Offset: {x: 0, y: 0}
+  m_EdgeRadius: 0.01
+  m_Points:
+  - {x: -1.2236131, y: -0.7514446}
+  - {x: -1.8979619, y: -0.79734284}
+  - {x: -1.6892279, y: -0.6025239}
+  - {x: -0.8145814, y: 0.3768727}
+  - {x: -0.39410955, y: 0.12914108}
+  - {x: -0.30780518, y: 0.2915494}
+  - {x: -0.47086763, y: 0.42081207}
+  - {x: 0.050213706, y: 1.499321}
+  - {x: 0.56382775, y: 0.3949212}
+  - {x: 0.43205854, y: 0.2380046}
+  - {x: 0.49002293, y: 0.118523926}
+  - {x: 0.74050546, y: 0.35508958}
+  - {x: 0.81700283, y: 0.43762532}
+  - {x: 1.9193931, y: -0.7653601}
+  - {x: 1.3766825, y: -0.76535976}
+  - {x: 1.4323469, y: -0.76536024}
 --- !u!1 &1588456221
 GameObject:
   m_ObjectHideFlags: 0

@@ -7,7 +7,8 @@ public class Asteroid : dangerousCollidable
     //[SerializeField] private Camera camera;
     [SerializeField] private float edgeBuffer = 0.4f;
     [SerializeField] private float mass = 100;
-
+    [FMODUnity.EventRef]
+    public string DestroyEvent = "";
 
     private Vector3 screenBounds;
     private float rightBound;
@@ -60,6 +61,7 @@ public class Asteroid : dangerousCollidable
 
     public override void Hit()
     {
+        FMODUnity.RuntimeManager.PlayOneShot(DestroyEvent, transform.position);
         GameObject.Destroy(gameObject);
     }
 

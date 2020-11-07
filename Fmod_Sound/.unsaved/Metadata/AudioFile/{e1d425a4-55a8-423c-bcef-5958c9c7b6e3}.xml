@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.00.00">
+	<object class="AudioFile" id="{e1d425a4-55a8-423c-bcef-5958c9c7b6e3}">
+		<property name="assetPath">
+			<value>Pkow.ogg</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>0.61537414965986392</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{33e0374e-732c-4bbc-82cc-62dae0918dbc}</destination>
+		</relationship>
+	</object>
+</objects>

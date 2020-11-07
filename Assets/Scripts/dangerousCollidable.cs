@@ -21,7 +21,7 @@ public abstract class dangerousCollidable : MonoBehaviour
     }
     public void SetPlayer(GameObject playerObject)
     {
-        Debug.Log("Hello World");
+        //Debug.Log("Hello World");
 
         player = playerObject;
     }

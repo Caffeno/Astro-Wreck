@@ -57,8 +57,8 @@ public class directorController : MonoBehaviour
             int targetIndex = Mathf.FloorToInt(Mathf.Round(Random.value * 3));
             targetIndex = targetIndex == 3 ? 0 : targetIndex;
             Vector3 spawnLocation = GetSpawn();
-            Debug.Log(targetIndex);
-            Debug.Log(asteroidPrefabs[targetIndex]);
+            //Debug.Log(targetIndex);
+            //Debug.Log(asteroidPrefabs[targetIndex]);
 
             GameObject astroClone = Instantiate(asteroidPrefabs[targetIndex], spawnLocation, Quaternion.identity);
             Asteroid astroScript = astroClone.GetComponent<Asteroid>();
@@ -78,8 +78,8 @@ public class directorController : MonoBehaviour
         Vector3 spawnDirection = new Vector3(Random.value - 0.5f, Random.value - 0.5f).normalized;
         Vector3 relitiveSpawnLocation = spawnDirection * (minSpawnDistance + spawnAreaThickness * Random.value);
         Vector3 spawnLocation = player.transform.position + relitiveSpawnLocation;
-        Debug.Log(spawnLocation);
-        Debug.Log(calls);
+        //Debug.Log(spawnLocation);
+        //Debug.Log(calls);
         calls += 1;
 
 
