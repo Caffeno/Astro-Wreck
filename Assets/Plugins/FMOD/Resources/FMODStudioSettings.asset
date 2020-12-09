@@ -16,7 +16,7 @@ MonoBehaviour:
   HasSourceProject: 1
   HasPlatforms: 1
   sourceProjectPath: Fmod_Sound/Fmod_Sound.fspro
-  sourceBankPath: Fmod_Sound/Build
+  sourceBankPath: Fmod_Sound\Build
   SourceBankPathUnformatted: 
   AutomaticEventLoading: 1
   BankLoadType: 0

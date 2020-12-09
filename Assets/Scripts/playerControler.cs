@@ -129,12 +129,8 @@ public class playerControler : MonoBehaviour
         {
             animator.SetBool(lockInput == 1 ? "turning_right" : "turning_left", true);
 
-            bool checkTeather = lockTarget.Move();
-            if (checkTeather)
-            {
-                UnLock();
-                return;
-            }
+            lockTarget.Move();
+
             float seperation = Vector3.Distance(transform.position, lockTarget.transform.position);
             Vector3 vectorToTarget = (lockTarget.transform.position - transform.position).normalized;
 

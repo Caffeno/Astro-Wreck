@@ -82,22 +82,17 @@ public class Asteroid : dangerousCollidable
         halo.enabled = false;
     }
 
-    public override bool ForceUpdate(Vector3 force)
+    public override void ForceUpdate(Vector3 force)
     {
         transform.position += force / (mass * 2);
         velocity += force / (Time.deltaTime * mass);
 
-        return false; // ScreenWrap();
     }
 
-    public override bool Move()
+    public override void Move()
     {
         transform.position += velocity * Time.deltaTime;
-        if (active)
-        {
-            return false; // ScreenWrap();
-        }
-        return false;
+
     }
 
     public override float GetMass()

@@ -7,8 +7,8 @@ public abstract class dangerousCollidable : MonoBehaviour
     public float activeAreaRadius;
     public float despawnRadius;
     public GameObject player;
-    public bool active;
-
+    public Vector2 playAreaSize;
+    public bool screenWrapper = true;
 
     public void SetActiveRadius(float radius) 
     {
@@ -26,14 +26,24 @@ public abstract class dangerousCollidable : MonoBehaviour
         player = playerObject;
     }
 
-    public void CheckActive()
-    {
-        active = Vector3.Distance(transform.position, player.transform.position) < activeAreaRadius ? true : false;
-    }
 
-    public void CheckDespawn()
+    public void CheckScreenwrap()
     {
-        if (Vector3.Distance(transform.position, player.transform.position) > despawnRadius)
+        float yOffset = player.transform.position.y - transform.position.y;
+        float xOffset = player.transform.position.x - transform.position.x;
+
+        if (screenWrapper)
+        {
+            if (Mathf.Abs(xOffset) > playAreaSize.x)
+            {
+                transform.position = new Vector3(player.transform.position.x + playAreaSize.x * Mathf.Sign(xOffset), transform.position.y);
+            }
+            if (Mathf.Abs(yOffset) > playAreaSize.y)
+            {
+                transform.position = new Vector3(transform.position.x, player.transform.position.y + playAreaSize.y * Mathf.Sign(yOffset));
+            }
+        }
+        else if(Mathf.Abs(xOffset) > playAreaSize.x || Mathf.Abs(yOffset) > playAreaSize.y)
         {
             GameObject.Destroy(gameObject);
         }
@@ -41,18 +51,19 @@ public abstract class dangerousCollidable : MonoBehaviour
 
     public void UpdateState()
     {
-        CheckActive();
-        if (!active)
-        {
-            CheckDespawn();
-        }
+        CheckScreenwrap();
+    }
+
+    public void SetPlayAreaSize(Vector2 size)
+    {
+        playAreaSize = size;
     }
 
     public abstract void Hit();
     public abstract void Freeze();
     public abstract void UnFreeze();
-    public abstract bool ForceUpdate(Vector3 force);
-    public abstract bool Move();
+    public abstract void ForceUpdate(Vector3 force);
+    public abstract void Move();
 
     public abstract float GetMass();
 }
