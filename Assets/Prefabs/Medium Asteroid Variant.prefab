@@ -117,6 +117,12 @@ PrefabInstance:
       propertyPath: mass
       value: 400
       objectReference: {fileID: 0}
+    - target: {fileID: 3608919509131746518, guid: 66e4bdc45f63e4b3f967236de08bc3f1,
+        type: 3}
+      propertyPath: coinPrefab
+      value: 
+      objectReference: {fileID: -7929708656655772017, guid: f5abe474f7b27c14f8de375925272fdc,
+        type: 3}
     - target: {fileID: 3608919509131746519, guid: 66e4bdc45f63e4b3f967236de08bc3f1,
         type: 3}
       propertyPath: m_Radius

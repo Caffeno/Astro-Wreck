@@ -59,7 +59,7 @@ public abstract class dangerousCollidable : MonoBehaviour
         playAreaSize = size;
     }
 
-    public abstract void Hit();
+    public abstract void Hit(Vector3 position, Vector3 velocity);
     public abstract void Freeze();
     public abstract void UnFreeze();
     public abstract void ForceUpdate(Vector3 force);

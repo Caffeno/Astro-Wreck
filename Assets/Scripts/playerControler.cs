@@ -262,7 +262,7 @@ public class playerControler : MonoBehaviour
             {
                 dangerousCollidable crashedObject = obsticle.GetComponent<dangerousCollidable>();
                 if (crashedObject == lockTarget) { UnLock(); }
-                crashedObject.Hit();
+                crashedObject.Hit(transform.position, velocity);
             }
         }
     }

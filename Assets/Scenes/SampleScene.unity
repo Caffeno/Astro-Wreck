@@ -379,7 +379,7 @@ GameObject:
   m_Component:
   - component: {fileID: 637267980}
   - component: {fileID: 637267981}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Weak Spot Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -573,7 +573,7 @@ GameObject:
   m_Component:
   - component: {fileID: 954473568}
   - component: {fileID: 954473569}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Weak Spot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -605,7 +605,7 @@ CapsuleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0.05}
@@ -623,7 +623,7 @@ GameObject:
   - component: {fileID: 1268510125}
   - component: {fileID: 1268510127}
   - component: {fileID: 1268510126}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -762,7 +762,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1544959425}
   - component: {fileID: 1544959426}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Head Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -843,7 +843,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1583272491}
   - component: {fileID: 1583272492}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -875,7 +875,7 @@ EdgeCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
